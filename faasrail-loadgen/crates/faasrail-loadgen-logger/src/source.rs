@@ -90,7 +90,7 @@ impl SourceBackend for LoggerRef {
     #[instrument(level = Level::INFO, skip(self, wreq))]
     #[inline]
     async fn issue(
-        &mut self,
+        &self,
         invocation_id: InvocationId,
         wreq: &WorkloadRequest,
         minute: u16,

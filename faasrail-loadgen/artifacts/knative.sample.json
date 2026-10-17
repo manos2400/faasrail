@@ -1,0 +1,8 @@
+{
+  "format": {
+    "url": "http://{bench}.default.1.2.3.4.sslip.io:80/invoke",
+    "headers": {
+      "content-type": "application/json"
+    }
+  }
+}

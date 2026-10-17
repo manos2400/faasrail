@@ -1,4 +1,7 @@
+mod http;
 mod noop;
+pub use http::Http;
+pub use http::RequestSpec;
 pub use noop::NoOp;
 
 use std::{error::Error as stdError, fmt::Debug, future::Future, time::Duration};
@@ -9,7 +12,7 @@ pub trait Backend: Clone + Debug + Send + 'static {
     type Error: stdError + Send + Sync + 'static;
 
     fn issue(
-        &mut self,
+        &self,
         invocation_id: InvocationId,
         wreq: &WorkloadRequest,
         minute: u16,

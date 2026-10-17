@@ -43,6 +43,7 @@ impl SourceClient {
         invoc_id_start: u64,
         minute_range: MinuteRange,
         backend: B,
+        request_timeout: Duration,
         minio_address: &str,
         bucket_name: &str,
     ) -> Result<Self, Error> {
@@ -77,6 +78,7 @@ impl SourceClient {
                     Arc::clone(&sync),
                     minute_range,
                     backend.clone(),
+                    request_timeout,
                     minio_address,
                     bucket_name,
                     inv_log.as_ref().map(|(to_inv_log, _)| InvocationLoggerRef {

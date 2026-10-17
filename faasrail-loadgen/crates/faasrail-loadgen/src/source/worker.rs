@@ -65,6 +65,10 @@ pub(crate) struct FunctionWorker<G: IatGenerator, B: Backend> {
     rng: FastRng,
     iat_gen: G,
 
+    /// Fixed per-request timeout. Open-loop requests routinely outlive the minute in which they
+    /// were issued, so the timeout can no longer be derived from the minute boundary.
+    request_timeout: Duration,
+
     inv_log: Option<InvocationLoggerRef>,
     quit_rx: broadcast::Receiver<()>,
 }
@@ -78,6 +82,7 @@ impl<G: IatGenerator, B: Backend> FunctionWorker<G, B> {
         sync: Arc<WorkerSync>,
         minute_range: MinuteRange,
         backend: B,
+        request_timeout: Duration,
         minio_address: &str,
         bucket_name: &str,
         inv_log: Option<InvocationLoggerRef>,
@@ -105,6 +110,7 @@ impl<G: IatGenerator, B: Backend> FunctionWorker<G, B> {
             rpm: row.rpm,
             wreq,
             backend,
+            request_timeout,
 
             iat_gen,
             rng: FastRng::seed_from_u64(seed),
@@ -198,7 +204,7 @@ impl<G: IatGenerator, B: Backend> FunctionWorker<G, B> {
                                 invocation_id.clone(),
                                 &self.wreq,
                                 minute,
-                                minute_end.deadline().duration_since(Instant::now()),
+                                self.request_timeout,
                             )
                             .await
                         {

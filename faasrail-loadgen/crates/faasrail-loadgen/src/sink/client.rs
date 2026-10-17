@@ -71,8 +71,9 @@ impl<B: super::backend::Backend> SinkClient<B> {
             let mut bw = BufWriter::with_capacity(
                 1 << 16,
                 File::options()
-                    .create_new(true)
+                    .create(true)
                     .write(true)
+                    .truncate(true)
                     .open(&path)
                     .map_err(|err| Error::Io {
                         msg: format!("failed to open output file '{}'", path.as_ref().display())

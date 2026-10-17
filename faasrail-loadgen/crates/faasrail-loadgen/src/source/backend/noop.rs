@@ -13,7 +13,7 @@ impl Backend for NoOp {
     #[instrument(level = Level::INFO)]
     #[inline]
     async fn issue(
-        &mut self,
+        &self,
         invocation_id: InvocationId,
         wreq: &WorkloadRequest,
         minute: u16,

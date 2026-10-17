@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 description = "FaaSRail's load generator - Logger"
-repository = "https://github.com/ckatsak/faasrail-loadgen"
+repository = "https://github.com/manos2400/faasrail"
 readme = "README.md"
 rust-version = "1.75.0"
 

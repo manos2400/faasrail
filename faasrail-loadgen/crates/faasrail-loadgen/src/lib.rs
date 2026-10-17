@@ -6,6 +6,7 @@
 )]
 
 pub mod fixer;
+pub mod http;
 pub mod sink;
 pub mod source;
 mod wreq;

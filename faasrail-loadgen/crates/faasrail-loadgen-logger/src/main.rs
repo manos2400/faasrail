@@ -5,6 +5,7 @@ use std::{
     fs::File,
     io::{self, BufWriter},
     path::PathBuf,
+    time::Duration,
 };
 
 use anyhow::{anyhow, Context, Result};
@@ -62,6 +63,10 @@ struct Cli {
     /// name of the MinIO bucket
     #[argh(option, default = "String::from(DEFAULT_MINIO_BUCKET_NAME)")]
     minio_bucket: String,
+
+    /// timeout in seconds for logging a generated request (default: 60)
+    #[argh(option, default = "60")]
+    request_timeout_secs: u64,
 }
 
 fn setup_signals_handler(shutdown: broadcast::Sender<()>) -> Result<()> {
@@ -145,6 +150,7 @@ async fn main() -> Result<()> {
         source_backend
             .new_ref()
             .expect("Logger has not been run yet"),
+        Duration::from_secs(cli.request_timeout_secs),
         &cli.minio_address,
         &cli.minio_bucket,
     )

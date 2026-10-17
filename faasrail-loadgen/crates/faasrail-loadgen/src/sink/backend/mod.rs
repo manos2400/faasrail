@@ -1,4 +1,6 @@
+mod http;
 mod noop;
+pub use http::Http;
 pub use noop::NoOp;
 pub use noop::NoResponse;
 
