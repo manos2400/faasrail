@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 #
-# ckatsak, Fri Oct 13 03:49:46 AM EEST 2023
-# phtof,   Thu Apr 18 12:33:12 AM EEST 2024
+# ckatsak,    Fri Oct 13 03:49:46 AM EEST 2023
+# phtof,      Thu Apr 18 12:33:12 AM EEST 2024
+# mkolydakis, Mon Jan 12 04:39:34 PM EET 2026
 
 import argparse
 import json
 import sys
 import traceback
 
-from benchmarks import workload_json_entries
+from benchmarks import workload_json_entries, workload_knative_services, workload_dirigent_services, load_benchmarks_config
 from generator import Config, RequestGenerator, DEFAULT_SEED
 from mapping import FunctionMapping
 from preprocess import azure_trace_preprocess, workloads_preprocess
@@ -27,6 +28,13 @@ def parse_args(args: list[str]) -> argparse.Namespace:
         help="path to input Workloads file",
     )
     parser.add_argument(
+        "-b",
+        "--benchmarks-file",
+        action="store",
+        metavar="BENCHMARKS_FILE_PATH",
+        help="path to input Benchmarks file (optional)",
+    )
+    parser.add_argument(
         "-o",
         "--out-file",
         action="store",
@@ -43,10 +51,19 @@ def parse_args(args: list[str]) -> argparse.Namespace:
         help="generate an experiment specification or compile a list of Workloads",
     )
     # Top-level subcommand "function"
-    subparsers.add_parser(
+    parser_functions = subparsers.add_parser(
         "functions",
         aliases=["func"],
-        help="output all available Workloads as a FaaSCell-compatible JSON list",
+        help="output all available Workloads in the specified platform format",
+    )
+    parser_functions.add_argument(
+        "--platform",
+        type=str,
+        action="store",
+        metavar="PLATFORM",
+        choices=["faascell", "knative", "dirigent"],
+        default="faascell",
+        help='target platform for workload specification { ["faascell"], "knative", "dirigent" }',
     )
     # Top-level subcommand "trace"
     parser_trace = subparsers.add_parser(
@@ -156,10 +173,20 @@ def main(argv: list[str]):
         args = validate_args(parse_args(argv[1:]))
         fout = open(args.out_file, "w") if args.out_file else sys.stdout
         workloads = workloads_preprocess(args.workloads_file)
+        benchmarks_config = load_benchmarks_config(args.benchmarks_file)
 
         if args.subcmd in {"functions", "func"}:
-            json_entries = workload_json_entries(workloads)
-            print(json.dumps(json_entries, indent=4), file=fout)
+            if args.platform == "faascell":
+                json_entries = workload_json_entries(workloads, benchmarks_config)
+                print(json.dumps(json_entries, indent=4), file=fout)
+            elif args.platform == "knative":
+                knative_yaml = workload_knative_services(workloads, benchmarks_config)
+                print(knative_yaml, file=fout)
+            elif args.platform == "dirigent":
+                dirigent_yaml = workload_dirigent_services(workloads, benchmarks_config)
+                print(dirigent_yaml, file=fout)
+            else:
+                raise RuntimeError(f'Unknown platform: {args.platform}')
         elif args.subcmd in {"trace", "tr"}:
             # TODO(ckatsak): If args.trace_type == "huawei-prv", add preprocessing step!
             trace = azure_trace_preprocess(args.trace_dir)

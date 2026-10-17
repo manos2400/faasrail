@@ -39,10 +39,13 @@ class Workload:
         """
         FUNCTION_ID_LEN = 24
         payload_encoded = json.dumps(self.payload).encode("utf-8")
+        # Knative service names must be DNS-1035 compliant (lowercase alphanumeric + hyphens)
+        # We replace underscores with hyphens here, to ensure compatibility accross all outputs (Knative and Dirigent functions, and workloads csv)
+        safe_bench = self.benchmark.replace("_", "-")
         payload_hash = hashlib.sha256(payload_encoded).hexdigest()[
-            : FUNCTION_ID_LEN - len(self.benchmark) - 1
+            : FUNCTION_ID_LEN - len(safe_bench) - 1
         ]
-        return f"{self.benchmark}-{payload_hash}"
+        return f"{safe_bench}-{payload_hash}"
 
     def __str__(self):
         # Keep generated `self.__repr__` for debugging, and override only this

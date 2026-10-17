@@ -1,0 +1,46 @@
+    {
+        "chameleon": {
+            "image": "ghcr.io/manos2400/functionbench-chameleon:latest",
+            "memory_mb": 640
+        },
+        "rnn_serving": {
+            "image": "ghcr.io/manos2400/functionbench-rnn_serving:latest",
+            "memory_mb": 384
+        },
+        "cnn_serving": {
+            "image": "ghcr.io/manos2400/functionbench-cnn_serving:latest", 
+            "memory_mb": 256
+        },
+        "helloworld": {
+            "image": "ghcr.io/manos2400/functionbench-helloworld:latest",
+            "memory_mb": 128
+        },
+        "image_processing": {
+            "image": "ghcr.io/manos2400/functionbench-image_processing:latest",
+            "memory_mb": 128
+        },
+        "json_serdes": {
+            "image": "ghcr.io/manos2400/functionbench-json_serdes:latest",
+            "memory_mb": 256
+        },
+        "lr_serving": {
+            "image": "ghcr.io/manos2400/functionbench-lr_serving:latest",
+            "memory_mb": 256
+        },
+        "lr_training": {
+            "image": "ghcr.io/manos2400/functionbench-lr_training:latest",
+            "memory_mb": 448
+        },
+        "matmul": {
+            "image": "ghcr.io/manos2400/functionbench-matmul:latest",
+            "memory_mb": 192
+        },
+        "pyaes": {
+            "image": "ghcr.io/manos2400/functionbench-pyaes:latest",
+            "memory_mb": 128
+        },
+        "video_processing": {
+            "image": "ghcr.io/manos2400/functionbench-video_processing:latest",
+            "memory_mb": 128
+        }
+    }
